@@ -1,5 +1,9 @@
+// This loads the environment variables from the .env file
+require('dotenv-extended').load();
+
 var restify = require('restify');
 var builder = require('botbuilder');
+var logger = require('./log');
 
 //=========================================================
 // Bot Setup
@@ -24,5 +28,6 @@ server.post('/api/messages', connector.listen());
 //=========================================================
 
 bot.dialog('/', function (session) {
+    logger.info("User said: %s", session.message.text);
     session.send("Hello World");
 });
