@@ -29,5 +29,6 @@ server.post('/api/messages', connector.listen());
 
 bot.dialog('/', function (session) {
     logger.info("User said: %s", session.message.text);
+    console.log("User said: %s", session.message.text)
     session.send("Hello World");
 });
