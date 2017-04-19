@@ -9,6 +9,19 @@ var url = require('url');
 var fs = require('fs');
 var util = require('util');
 var remotepng = require('./remotepng')
+var redis = require('redis');
+var client = redis.createClient(6379, 'tradingbot.redis.cache.windows.net', { no_ready_check: true });
+client.auth('pm/THZHkMq0u1SfLfuVDNBhDT/v/J5Flu0EpsrLXos4=', function (err) {
+	if (err) throw err;
+});
+
+client.on("error", function (err) {
+	console.log("Error " + err);
+});
+
+client.on('connect', function () {
+	console.log('Connected to Redis');
+});
 
 // Swagger client for Bot Connector API
 var connectorApiClient = new Swagger(
@@ -30,6 +43,18 @@ var connector = new builder.ChatConnector({
 });
 var bot = new builder.UniversalBot(connector);
 server.post('/api/messages', connector.listen());
+
+//=========================================================
+// Functions
+//=========================================================
+
+function redisGet(key, session) {
+	client.get(key, function (err, reply) {
+		if (err) throw err;
+		console.log(reply.toString());
+		session.msg(reply.toString());
+	});
+}
 
 //=========================================================
 // Bots Middleware
@@ -60,7 +85,7 @@ bot.dialog('/', [
             ]);
         var msg = new builder.Message(session).attachments([card]);
         session.send(msg);
-        session.send("Hi... I'm the Microsoft Bot Framework demo bot for Facebook. I can show you everything you can use our Bot Builder SDK to do on Facebook.");
+        session.send("您好～我是TradingBot，除了提供台灣期貨即時動態、每日未平倉資訊，還結合TradingBot自動交易系統的即時交易，並且給予選擇權投資建議，請參考以下選單：");
         session.beginDialog('/help');
     },
     function (session, results) {
@@ -69,7 +94,7 @@ bot.dialog('/', [
     },
     function (session, results) {
         // Always say goodbye
-        session.send("Ok... See you later!");
+        session.send("再見囉～期待再次使用！");
     }
 ]);
 
