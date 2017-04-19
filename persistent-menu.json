@@ -1,0 +1,16 @@
+{
+  "setting_type" : "call_to_actions",
+  "thread_state" : "existing_thread",
+  "call_to_actions":[
+    {
+      "type":"postback",
+      "title":"幫助",
+      "payload":"action?help"
+    },
+    {
+      "type":"postback",
+      "title":"離開",
+      "payload":"action?goodbye"
+    }
+  ]
+}
