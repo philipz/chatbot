@@ -5,12 +5,22 @@
     {
       "type":"postback",
       "title":"幫助",
-      "payload":"action?help"
+      "payload":"help"
     },
     {
       "type":"postback",
       "title":"離開",
-      "payload":"action?goodbye"
+      "payload":"goodbye"
+    },
+    {
+      "type":"web_url",
+      "title":"隱私權宣告",
+      "url":"https://tradingbot.azurewebsites.net/policy.html"
+    },
+    {
+      "type":"web_url",
+      "title":"免責聲明",
+      "url":"https://tradingbot.azurewebsites.net/disclaimer.html"
     }
   ]
 }

@@ -12,15 +12,15 @@ var remotepng = require('./remotepng')
 var redis = require('redis');
 var client = redis.createClient(6379, 'tradingbot.redis.cache.windows.net', { no_ready_check: true });
 client.auth('pm/THZHkMq0u1SfLfuVDNBhDT/v/J5Flu0EpsrLXos4=', function (err) {
-	if (err) throw err;
+    if (err) throw err;
 });
 
 client.on("error", function (err) {
-	console.log("Error " + err);
+    console.log("Error " + err);
 });
 
 client.on('connect', function () {
-	console.log('Connected to Redis');
+    console.log('Connected to Redis');
 });
 
 // Swagger client for Bot Connector API
@@ -49,11 +49,11 @@ server.post('/api/messages', connector.listen());
 //=========================================================
 
 function redisGet(key, session) {
-	client.get(key, function (err, reply) {
-		if (err) throw err;
-		console.log(reply.toString());
-		session.msg(reply.toString());
-	});
+    client.get(key, function (err, reply) {
+        if (err) throw err;
+        console.log(reply.toString());
+        session.msg(reply.toString());
+    });
 }
 
 //=========================================================
@@ -66,8 +66,8 @@ bot.use(builder.Middleware.dialogVersion({ version: 1.0, resetCommand: /^reset/i
 // Bots Global Actions
 //=========================================================
 
-bot.endConversationAction('goodbye', 'Goodbye :)', { matches: /^goodbye/i });
-bot.beginDialogAction('help', '/help', { matches: [/^help/i, /^h/i, /\u5e6b\u5fd9/, /\u6c42\u52a9/] });
+bot.endConversationAction('goodbye', '再見囉～期待再次使用！', { matches: [/^goodbye/i, /\u96e2\u958b/, /\u518D\u898B/] });
+bot.beginDialogAction('help', '/help', { matches: [/^help/i, /\u5e6b\u5fd9/, /\u6c42\u52a9/, /\u5e6b\u52a9/] });
 bot.beginDialogAction('attach', '/attach', { matches: [/^attach/i, /^a/i] });
 
 //=========================================================
