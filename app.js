@@ -48,23 +48,22 @@ server.post('/api/messages', connector.listen());
 // Functions
 //=========================================================
 
-function redisGet(key, session) {
-    client.get(key, function (err, reply) {
-        if (err) throw err;
-        console.log(reply.toString());
-        session.msg(reply.toString());
-    });
-}
-
-var symbol = "";
-
 function redisGetSymbol(key, session) {
     client.get(key, function (err, reply) {
         if (err) throw err;
         console.log(reply.toString());
-        symbol = reply.toString();
-        remotepng.shotpng(symbol).then(function () {
-            sendInline(session, './images/now.png', 'image/png', 'BotFrameworkLogo.png');
+        var url = 'http://info512.taifex.com.tw/Future/chart.aspx?type=1&size=630400&contract=' + reply.toString() + '&CommodityName=%E8%87%BA%E6%8C%87%E9%81%B8';
+        sendInternetUrl(session, url, 'image/gif', '期貨交易資訊');
+    });
+}
+
+function redisGetSymbol1(key, session) {
+    client.get(key, function (err, reply) {
+        if (err) throw err;
+        console.log(reply.toString());
+        var yyyymm = new Date().getFullYear() + reply.toString().substring(2, 4);;
+        remotepng.shotpng('https://tw.screener.finance.yahoo.net/future/aa03?opmr=optionpart&opcm=WTXO&opym=' + yyyymm, 'options.png').then(function () {
+            sendInline(session, './images/options.png', 'image/png', '選擇權報價');
         });
     });
 }
@@ -81,7 +80,6 @@ bot.use(builder.Middleware.dialogVersion({ version: 1.0, resetCommand: /^reset/i
 
 bot.endConversationAction('goodbye', '再見囉～期待再次使用！', { matches: [/^goodbye/i, /\u96e2\u958b/, /\u518D\u898B/] });
 bot.beginDialogAction('help', '/help', { matches: [/^help/i, /\u5e6b\u5fd9/, /\u6c42\u52a9/, /\u5e6b\u52a9/] });
-bot.beginDialogAction('attach', '/attach', { matches: [/^attach/i, /^a/i] });
 
 //=========================================================
 // Bots Dialogs
@@ -90,14 +88,14 @@ bot.beginDialogAction('attach', '/attach', { matches: [/^attach/i, /^a/i] });
 bot.dialog('/', [
     function (session) {
         // Send a greeting and show help.
-        var card = new builder.HeroCard(session)
+        /*var card = new builder.HeroCard(session)
             .title("Microsoft Bot Framework")
             .text("Your bots - wherever your users are talking.")
             .images([
                 builder.CardImage.create(session, "http://docs.botframework.com/images/demo_bot_image.png")
             ]);
         var msg = new builder.Message(session).attachments([card]);
-        session.send(msg);
+        session.send(msg);*/
         session.send("您好～我是TradingBot，除了提供台灣期貨即時動態、每日未平倉資訊，還結合TradingBot自動交易系統的即時交易，並且給予選擇權投資建議，請參考以下選單：");
         session.beginDialog('/help');
     },
@@ -113,12 +111,17 @@ bot.dialog('/', [
 
 bot.dialog('/menu', [
     function (session) {
-        builder.Prompts.choice(session, "What demo would you like to run?", "prompts|picture|cards|list|carousel|receipt|attach|actions|(quit)");
+        builder.Prompts.choice(session, "What demo would you like to run?", "prompts|picture|cards|list|carousel|receipt|交易資訊|actions|(quit)");
     },
     function (session, results) {
         if (results.response && results.response.entity != '(quit)') {
             // Launch demo dialog
-            session.beginDialog('/' + results.response.entity);
+            if (results.response.entity === '交易資訊') {
+                session.beginDialog('/info');
+            } else {
+
+                session.beginDialog('/' + results.response.entity);
+            }
         } else {
             // Exit the menu
             session.endDialog();
@@ -132,7 +135,7 @@ bot.dialog('/menu', [
 
 bot.dialog('/help', [
     function (session) {
-        session.endDialog("Global commands that are available anytime:\n\n* menu - Exits a demo and returns to the menu.\n* goodbye - End this conversation.\n* help - Displays these commands.");
+        session.endDialog("下面指令隨時都可輸入：\n\n* menu - 跳出目前功能，回到選單。\n* goodbye - 離開這次交談。\n* help - 顯示求助說明。");
     }
 ]);
 
@@ -416,7 +419,7 @@ bot.dialog('/weather', [
 ]);
 bot.beginDialogAction('weather', '/weather');   // <-- no 'matches' option means this can only be triggered by a button.
 
-bot.dialog('/attach', [
+bot.dialog('/info', [
     function (session) {
         session.send('Welcome, here you can see attachment alternatives:');
         builder.Prompts.choice(session, 'What sample option would you like to see?', Options, {
@@ -427,15 +430,16 @@ bot.dialog('/attach', [
         var option = results.response ? results.response.entity : Inline;
         switch (option) {
             case Inline:
-                return redisGetSymbol("SYMBOL", session);
-                /*remotepng.shotpng(symbol).then(function () {
-                    sendInline(session, './images/now.png', 'image/png', 'BotFrameworkLogo.png');
-                });*/
+                return redisGetSymbol('SYMBOL', session);
+            //var url = 'http://info512.taifex.com.tw/Future/chart.aspx?type=1&size=630400&contract=' + redisGet("SYMBOL") + '&CommodityName=%E8%87%BA%E6%8C%87%E9%81%B8';
+            //return sendInternetUrl(session, url, 'image/gif', '期貨交易資訊');
             case Upload:
                 return uploadFileAndSend(session, './images/big-image.png', 'image/png', 'BotFramework.png');
             case External:
-                var url = 'https://docs.botframework.com/en-us/images/faq-overview/botframework_overview_july.png';
-                return sendInternetUrl(session, url, 'image/png', 'BotFrameworkOverview.png');
+                return redisGetSymbol1('SYMBOL', session);
+            /*remotepng.shotpng('https://tw.screener.finance.yahoo.net/future/aa03?opmr=optionpart&opcm=WTXO&opym=' + yyyymm , 'options.png' ).then(function () {
+                    sendInline(session, './images/options.png', 'image/png', '選擇權報價');
+            });*/
         }
     }]);
 
@@ -460,7 +464,8 @@ function sendInline(session, filePath, contentType, attachmentFileName) {
                 name: attachmentFileName
             });
 
-        session.send(msg);
+        //session.send(msg);
+        session.endDialog(msg);
     });
 }
 
@@ -509,7 +514,7 @@ function sendInternetUrl(session, url, contentType, attachmentFileName) {
             name: attachmentFileName
         });
 
-    session.send(msg);
+    session.endDialog(msg);
 }
 
 // Uploads file to Connector API and returns Attachment URLs

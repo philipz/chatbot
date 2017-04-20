@@ -14,6 +14,11 @@
     },
     {
       "type":"web_url",
+      "title":"歷史交易紀錄",
+      "url":"https://goo.gl/8u77WO"
+    },
+    {
+      "type":"web_url",
       "title":"隱私權宣告",
       "url":"https://tradingbot.azurewebsites.net/policy.html"
     },
