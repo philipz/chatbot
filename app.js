@@ -56,6 +56,19 @@ function redisGet(key, session) {
     });
 }
 
+var symbol = "";
+
+function redisGetSymbol(key, session) {
+    client.get(key, function (err, reply) {
+        if (err) throw err;
+        console.log(reply.toString());
+        symbol = reply.toString();
+        remotepng.shotpng(symbol).then(function () {
+            sendInline(session, './images/now.png', 'image/png', 'BotFrameworkLogo.png');
+        });
+    });
+}
+
 //=========================================================
 // Bots Middleware
 //=========================================================
@@ -414,9 +427,10 @@ bot.dialog('/attach', [
         var option = results.response ? results.response.entity : Inline;
         switch (option) {
             case Inline:
-                return remotepng.shotpng('TX047').then(function () {
+                return redisGetSymbol("SYMBOL", session);
+                /*remotepng.shotpng(symbol).then(function () {
                     sendInline(session, './images/now.png', 'image/png', 'BotFrameworkLogo.png');
-                });
+                });*/
             case Upload:
                 return uploadFileAndSend(session, './images/big-image.png', 'image/png', 'BotFramework.png');
             case External:
