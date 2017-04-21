@@ -68,6 +68,14 @@ function redisGetSymbol1(key, session) {
     });
 }
 
+function redisGetReal(key, session) {
+    client.get(key, function (err, reply) {
+        if (err) throw err;
+        console.log(reply.toString());
+        session.send(reply.toString());
+    });
+}
+
 //=========================================================
 // Bots Middleware
 //=========================================================
@@ -78,7 +86,7 @@ bot.use(builder.Middleware.dialogVersion({ version: 1.0, resetCommand: /^reset/i
 // Bots Global Actions
 //=========================================================
 
-bot.endConversationAction('goodbye', '再見囉～期待再次使用！', { matches: [/^goodbye/i, /\u96e2\u958b/, /\u518D\u898B/] });
+bot.endConversationAction('goodbye', '再見囉～歡迎來信指教 tradingbot.tw@gmail.com 期待再次使用！', { matches: [/^goodbye/i, /\u96e2\u958b/, /\u518D\u898B/] });
 bot.beginDialogAction('help', '/help', { matches: [/^help/i, /\u5e6b\u5fd9/, /\u6c42\u52a9/, /\u5e6b\u52a9/] });
 
 //=========================================================
@@ -88,15 +96,15 @@ bot.beginDialogAction('help', '/help', { matches: [/^help/i, /\u5e6b\u5fd9/, /\u
 bot.dialog('/', [
     function (session) {
         // Send a greeting and show help.
-        /*var card = new builder.HeroCard(session)
-            .title("Microsoft Bot Framework")
-            .text("Your bots - wherever your users are talking.")
+        var card = new builder.HeroCard(session)
+            .title("TradingBot")
+            .text("訣竅提醒-有快速選項在右下角。")
             .images([
-                builder.CardImage.create(session, "http://docs.botframework.com/images/demo_bot_image.png")
+                builder.CardImage.create(session, "https://cloud.githubusercontent.com/assets/664465/25264522/249d9720-269a-11e7-9308-8274c496a072.png")
             ]);
         var msg = new builder.Message(session).attachments([card]);
-        session.send(msg);*/
-        session.send("您好～我是TradingBot，除了提供台灣期貨即時動態、每日未平倉資訊，還結合TradingBot自動交易系統的即時交易，並且給予選擇權投資建議，請參考以下選單：");
+        session.send(msg);
+        session.send("您好～我是TradingBot，除了提供台灣期貨即時動態、每日未平倉資訊，還結合TradingBot自動交易系統的即時交易，並可提供選擇權投資建議，請參考以下選單：");
         session.beginDialog('/help');
     },
     function (session, results) {
@@ -105,18 +113,19 @@ bot.dialog('/', [
     },
     function (session, results) {
         // Always say goodbye
-        session.send("再見囉～期待再次使用！");
+        session.send("再見囉～歡迎來信指教 tradingbot.tw@gmail.com 期待再次使用！");
     }
 ]);
 
 bot.dialog('/menu', [
     function (session) {
-        builder.Prompts.choice(session, "What demo would you like to run?", "prompts|picture|cards|list|carousel|receipt|交易資訊|actions|(quit)");
+        //carousel 國際新聞 receipt 訂閱服務 alert 到價提示
+        builder.Prompts.choice(session, "What demo would you like to run?", "prompts|picture|cards|list|金融新聞|商品資訊|到價警示|訂閱服務|離開");
     },
     function (session, results) {
         if (results.response && results.response.entity != '(quit)') {
             // Launch demo dialog
-            if (results.response.entity === '交易資訊') {
+            if (results.response.entity === '商品資訊') {
                 session.beginDialog('/info');
             } else {
 
@@ -131,7 +140,7 @@ bot.dialog('/menu', [
         // The menu runs a loop until the user chooses to (quit).
         session.replaceDialog('/menu');
     }
-]).reloadAction('reloadMenu', null, { matches: /^menu|show menu/i });
+]).reloadAction('reloadMenu', null, { matches: [/^menu|show menu/i, /\u9078\u55AE/] });
 
 bot.dialog('/help', [
     function (session) {
