@@ -3,7 +3,7 @@ var webshot = require('webshot');
 var options = {
   shotSize: {
     width: 950
-    , height: 700
+    , height: 705
   },
   shotOffset: {
     left: 0
@@ -11,7 +11,8 @@ var options = {
     , top: 120
     , bottom: 0
   },
-  customHeaders: "referer:https://tw.stock.yahoo.com/"
+  customHeaders: "referer:https://tw.stock.yahoo.com/",
+  defaultWhiteBackground: true
 };
 
 /**

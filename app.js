@@ -68,11 +68,38 @@ function redisGetSymbol1(key, session) {
     });
 }
 
+function redisGetSymbol1W(key, session) {
+    client.get(key, function (err, reply) {
+        if (err) throw err;
+        console.log(reply.toString());
+        var yyyymm = reply.toString()
+        remotepng.shotpng('https://tw.screener.finance.yahoo.net/future/aa03?opmr=optionpart&opcm=WTXO&opym=' + yyyymm, 'optionsw.png').then(function () {
+            sendInline(session, './images/optionsw.png', 'image/png', '選擇權報價');
+        });
+    });
+}
+
 function redisGetReal(key, session) {
     client.get(key, function (err, reply) {
         if (err) throw err;
         console.log(reply.toString());
         session.send(reply.toString());
+    });
+}
+
+function redisGetOI(key, session) {
+    client.get(key, function (err, reply) {
+        if (err) throw err;
+        console.log(reply.toString());
+        session.endDialog(reply.toString());
+    });
+}
+
+function redisGetREAL(key, session) {
+    client.get(key, function (err, reply) {
+        if (err) throw err;
+        console.log(reply.toString());
+        session.endDialog(reply.toString());
     });
 }
 
@@ -120,16 +147,25 @@ bot.dialog('/', [
 bot.dialog('/menu', [
     function (session) {
         //carousel 國際新聞 receipt 訂閱服務 alert 到價提示
-        builder.Prompts.choice(session, "What demo would you like to run?", "prompts|picture|cards|list|金融新聞|商品資訊|到價警示|訂閱服務|離開");
+        builder.Prompts.choice(session, "請選擇下列功能：", "prompts|picture|cards|list|金融新聞|商品資訊|未平倉量|到價警示|訂閱服務|托播廣告|離開");
     },
     function (session, results) {
-        if (results.response && results.response.entity != '(quit)') {
+        if (results.response && results.response.entity != '離開') {
             // Launch demo dialog
-            if (results.response.entity === '商品資訊') {
+            if (results.response.entity === '金融新聞') {
+                session.beginDialog('/news');
+            } else if (results.response.entity === '商品資訊') {
                 session.beginDialog('/info');
+            } else if (results.response.entity === '未平倉量') {
+                session.beginDialog('/oi');
+            } else if (results.response.entity === '到價警示') {
+                session.beginDialog('/alert');
+            } else if (results.response.entity === '訂閱服務') {
+                session.beginDialog('/subscribe');
+            } else if (results.response.entity === '托播廣告') {
+                session.beginDialog('/ad');                
             } else {
-
-                session.beginDialog('/' + results.response.entity);
+                session.beginDialog('/news');
             }
         } else {
             // Exit the menu
@@ -144,7 +180,7 @@ bot.dialog('/menu', [
 
 bot.dialog('/help', [
     function (session) {
-        session.endDialog("下面指令隨時都可輸入：\n\n* menu - 跳出目前功能，回到選單。\n* goodbye - 離開這次交談。\n* help - 顯示求助說明。");
+        session.endDialog("下面指令隨時都可輸入：\n\n* menu - 跳出後回到選單。\n* goodbye - 離開這次交談。\n* help - 顯示求助說明。");
     }
 ]);
 
@@ -197,6 +233,34 @@ bot.dialog('/picture', [
                 contentUrl: "http://www.theoldrobots.com/images62/Bender-18.JPG"
             }]);
         session.endDialog(msg);
+    }
+]);
+
+bot.dialog('/real', [
+    function (session) {
+        session.send("今日程式交易自動交易紀錄如下：");
+        redisGetREAL("REAL", session)
+    }
+]);
+
+bot.dialog('/oi', [
+    function (session) {
+        session.send("今日未平倉資訊如下：");
+        redisGetOI("OI", session)
+    }
+]);
+
+bot.dialog('/alert', [
+    function (session) {
+        session.send("透過交談方式選擇金融商品，再設定警示條件，如漲跌幅、價格、交易量，符合即可自動通知。");
+        session.endDialog("即將推出，敬請期待......");
+    }
+]);
+
+bot.dialog('/ad', [
+    function (session) {
+        session.send("歡迎金融業者托播相關商品廣告，並歡迎異業合作，篩選後提供符合粉絲團朋友之相關商品，創造雙贏機會。");
+        session.endDialog("即將推出，敬請期待......");
     }
 ]);
 
@@ -253,7 +317,7 @@ bot.dialog('/list', [
     }
 ]);
 
-bot.dialog('/carousel', [
+bot.dialog('/news', [
     function (session) {
         session.send("You can pass a custom message to Prompts.choice() that will present the user with a carousel of cards to select from. Each card can even support multiple actions.");
 
@@ -320,7 +384,7 @@ bot.dialog('/carousel', [
     }
 ]);
 
-bot.dialog('/receipt', [
+bot.dialog('/subscribe', [
     function (session) {
         session.send("You can send a receipts for facebook using Bot Builders ReceiptCard...");
         var msg = new builder.Message(session)
@@ -430,32 +494,32 @@ bot.beginDialogAction('weather', '/weather');   // <-- no 'matches' option means
 
 bot.dialog('/info', [
     function (session) {
-        session.send('Welcome, here you can see attachment alternatives:');
-        builder.Prompts.choice(session, 'What sample option would you like to see?', Options, {
+        builder.Prompts.choice(session, '請問想查看哪種商品資訊？', SelOpts, {
             maxRetries: 3
         });
     },
     function (session, results) {
-        var option = results.response ? results.response.entity : Inline;
+        var option = results.response ? results.response.entity : Futures;
         switch (option) {
-            case Inline:
+            case Futures:
                 return redisGetSymbol('SYMBOL', session);
             //var url = 'http://info512.taifex.com.tw/Future/chart.aspx?type=1&size=630400&contract=' + redisGet("SYMBOL") + '&CommodityName=%E8%87%BA%E6%8C%87%E9%81%B8';
             //return sendInternetUrl(session, url, 'image/gif', '期貨交易資訊');
-            case Upload:
-                return uploadFileAndSend(session, './images/big-image.png', 'image/png', 'BotFramework.png');
-            case External:
+            case Options:
                 return redisGetSymbol1('SYMBOL', session);
+                //return uploadFileAndSend(session, './images/big-image.png', 'image/png', 'BotFramework.png');
+            case Woptions:
+                return redisGetSymbol1W('SYMBOLW', session);
             /*remotepng.shotpng('https://tw.screener.finance.yahoo.net/future/aa03?opmr=optionpart&opcm=WTXO&opym=' + yyyymm , 'options.png' ).then(function () {
                     sendInline(session, './images/options.png', 'image/png', '選擇權報價');
             });*/
         }
     }]);
 
-var Inline = 'Show inline attachment';
-var Upload = 'Show uploaded attachment';
-var External = 'Show Internet attachment';
-var Options = [Inline, Upload, External];
+var Futures = '期貨走勢';
+var Woptions= '周選擇權價格表';
+var Options = '選擇權價格表';
+var SelOpts = [Futures, Options, Woptions];
 
 // Sends attachment inline in base64
 function sendInline(session, filePath, contentType, attachmentFileName) {
