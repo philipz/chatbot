@@ -147,12 +147,16 @@ bot.dialog('/', [
 bot.dialog('/menu', [
     function (session) {
         //carousel 國際新聞 receipt 訂閱服務 alert 到價提示
-        builder.Prompts.choice(session, "請選擇下列功能：", "prompts|picture|cards|list|金融新聞|商品資訊|未平倉量|到價警示|訂閱服務|托播廣告|離開");
+        builder.Prompts.choice(session, "請選擇下列功能：", "交易現況|選擇權策略|金融新聞|商品資訊|未平倉量|到價警示|訂閱服務|托播廣告|離開");
     },
     function (session, results) {
         if (results.response && results.response.entity != '離開') {
             // Launch demo dialog
-            if (results.response.entity === '金融新聞') {
+            if (results.response.entity === '交易現況') {
+                session.beginDialog('/real');
+            } else if (results.response.entity === '選擇權策略') {
+                session.beginDialog('/options');
+            } else if (results.response.entity === '金融新聞') {
                 session.beginDialog('/news');
             } else if (results.response.entity === '商品資訊') {
                 session.beginDialog('/info');
@@ -163,7 +167,7 @@ bot.dialog('/menu', [
             } else if (results.response.entity === '訂閱服務') {
                 session.beginDialog('/subscribe');
             } else if (results.response.entity === '托播廣告') {
-                session.beginDialog('/ad');                
+                session.beginDialog('/ad');
             } else {
                 session.beginDialog('/news');
             }
@@ -220,18 +224,6 @@ bot.dialog('/prompts', [
         results.response.forEach(function (attachment) {
             msg.addAttachment(attachment);
         });
-        session.endDialog(msg);
-    }
-]);
-
-bot.dialog('/picture', [
-    function (session) {
-        session.send("You can easily send pictures to a user...");
-        var msg = new builder.Message(session)
-            .attachments([{
-                contentType: "image/jpeg",
-                contentUrl: "http://www.theoldrobots.com/images62/Bender-18.JPG"
-            }]);
         session.endDialog(msg);
     }
 ]);
@@ -294,9 +286,9 @@ bot.dialog('/cards', [
     }
 ]);
 
-bot.dialog('/list', [
+bot.dialog('/options', [
     function (session) {
-        session.send("You can send the user a list of cards as multiple attachments in a single message...");
+        session.send("依據期貨波動和演算法分析，選擇權投資建議如下：");
 
         var msg = new builder.Message(session)
             .attachments([
@@ -319,74 +311,74 @@ bot.dialog('/list', [
 
 bot.dialog('/news', [
     function (session) {
-        session.send("You can pass a custom message to Prompts.choice() that will present the user with a carousel of cards to select from. Each card can even support multiple actions.");
+        session.send("您可以選擇喜歡的財經新聞，並按下「讚+1」按鈕，以便篩選更優質的新聞，謝謝！");
 
         // Ask the user to select an item from a carousel.
         var msg = new builder.Message(session)
             .attachmentLayout(builder.AttachmentLayout.carousel)
             .attachments([
                 new builder.HeroCard(session)
-                    .title("Space Needle")
-                    .subtitle("The Space Needle is an observation tower in Seattle, Washington, a landmark of the Pacific Northwest, and an icon of Seattle.")
+                    .title("msn 財經")
+                    .subtitle("台股站回季線 投信：個股差異將拉大")
                     .images([
-                        builder.CardImage.create(session, "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Seattlenighttimequeenanne.jpg/320px-Seattlenighttimequeenanne.jpg")
-                            .tap(builder.CardAction.showImage(session, "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Seattlenighttimequeenanne.jpg/800px-Seattlenighttimequeenanne.jpg")),
+                        builder.CardImage.create(session, "https://cloud.githubusercontent.com/assets/664465/25314190/b2f2538e-2871-11e7-83eb-eb41c0db28cd.jpg")
+                            .tap(builder.CardAction.showImage(session, "https://cloud.githubusercontent.com/assets/664465/25314157/1fed14f2-2871-11e7-8099-86bc94c582f5.jpg")),
                     ])
                     .buttons([
-                        builder.CardAction.openUrl(session, "https://en.wikipedia.org/wiki/Space_Needle", "Wikipedia"),
-                        builder.CardAction.imBack(session, "select:100", "Select")
+                        builder.CardAction.openUrl(session, "https://www.msn.com/zh-tw/money/topstories/%E5%8F%B0%E8%82%A1%E7%AB%99%E5%9B%9E%E5%AD%A3%E7%B7%9A-%E6%8A%95%E4%BF%A1%E5%80%8B%E8%82%A1%E5%B7%AE%E7%95%B0%E5%B0%87%E6%8B%89%E5%A4%A7/ar-BBAakiQ", "MSN財經"),
+                        builder.CardAction.imBack(session, "select:msn", "讚+1")
                     ]),
                 new builder.HeroCard(session)
-                    .title("Pikes Place Market")
-                    .subtitle("Pike Place Market is a public market overlooking the Elliott Bay waterfront in Seattle, Washington, United States.")
+                    .title("鉅亨網")
+                    .subtitle("台股重返季線 有望現轉折 惟仍須慎防7大變數")
                     .images([
-                        builder.CardImage.create(session, "https://upload.wikimedia.org/wikipedia/en/thumb/2/2a/PikePlaceMarket.jpg/320px-PikePlaceMarket.jpg")
-                            .tap(builder.CardAction.showImage(session, "https://upload.wikimedia.org/wikipedia/en/thumb/2/2a/PikePlaceMarket.jpg/800px-PikePlaceMarket.jpg")),
+                        builder.CardImage.create(session, "https://cloud.githubusercontent.com/assets/664465/25314208/2fef7ad8-2872-11e7-96c8-99453d336cdf.jpg")
+                            .tap(builder.CardAction.showImage(session, "https://cloud.githubusercontent.com/assets/664465/25314207/2ba72f66-2872-11e7-84ef-0683d8dbf306.jpg")),
                     ])
                     .buttons([
-                        builder.CardAction.openUrl(session, "https://en.wikipedia.org/wiki/Pike_Place_Market", "Wikipedia"),
-                        builder.CardAction.imBack(session, "select:101", "Select")
+                        builder.CardAction.openUrl(session, "http://news.cnyes.com/news/id/3788485t", "鉅亨網"),
+                        builder.CardAction.imBack(session, "select:cnyes", "讚+1")
                     ]),
                 new builder.HeroCard(session)
-                    .title("EMP Museum")
-                    .subtitle("EMP Musem is a leading-edge nonprofit museum, dedicated to the ideas and risk-taking that fuel contemporary popular culture.")
+                    .title("Yahoo!奇摩新聞")
+                    .subtitle("《台北股市》當沖降稅28日上路，台股添活水")
                     .images([
-                        builder.CardImage.create(session, "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Night_Exterior_EMP.jpg/320px-Night_Exterior_EMP.jpg")
-                            .tap(builder.CardAction.showImage(session, "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Night_Exterior_EMP.jpg/800px-Night_Exterior_EMP.jpg"))
+                        builder.CardImage.create(session, "https://cloud.githubusercontent.com/assets/664465/25314342/ad9d1b14-2874-11e7-973c-b1f000599f19.png")
+                            .tap(builder.CardAction.showImage(session, "https://cloud.githubusercontent.com/assets/664465/25314340/acc8cb48-2874-11e7-90cd-b947739ee75f.png"))
                     ])
                     .buttons([
-                        builder.CardAction.openUrl(session, "https://en.wikipedia.org/wiki/EMP_Museum", "Wikipedia"),
-                        builder.CardAction.imBack(session, "select:102", "Select")
+                        builder.CardAction.openUrl(session, "https://tw.stock.yahoo.com/news_content/url/d/a/20170423/%E5%8F%B0%E5%8C%97%E8%82%A1%E5%B8%82-%E7%95%B6%E6%B2%96%E9%99%8D%E7%A8%8528%E6%97%A5%E4%B8%8A%E8%B7%AF-%E5%8F%B0%E8%82%A1%E6%B7%BB%E6%B4%BB%E6%B0%B4-055921465.html", "Yahoo!奇摩新聞"),
+                        builder.CardAction.imBack(session, "select:yahoo", "讚+1")
                     ])
             ]);
-        builder.Prompts.choice(session, msg, "select:100|select:101|select:102");
+        builder.Prompts.choice(session, msg, "select:msn|select:cnyes|select:yahoo");
     },
     function (session, results) {
         var action, item;
         var kvPair = results.response.entity.split(':');
         switch (kvPair[0]) {
             case 'select':
-                action = 'selected';
+                action = '很讚！';
                 break;
         }
         switch (kvPair[1]) {
-            case '100':
-                item = "the Space Needle";
+            case 'msn':
+                item = "台股站回季線 投信：個股差異將拉大";
                 break;
-            case '101':
-                item = "Pikes Place Market";
+            case 'cnyes':
+                item = "台股重返季線 有望現轉折 惟仍須慎防7大變數";
                 break;
-            case '102':
-                item = "the EMP Museum";
+            case 'yahoo':
+                item = "《台北股市》當沖降稅28日上路，台股添活水";
                 break;
         }
-        session.endDialog('You %s "%s"', action, item);
+        session.endDialog('您認為 "%s" %s', item, action);
     }
 ]);
 
 bot.dialog('/subscribe', [
     function (session) {
-        session.send("You can send a receipts for facebook using Bot Builders ReceiptCard...");
+        session.send("您可以付費取得TradingBot自動交易系統的即時推播資訊，可供參考並審視您期貨投資的進出點，TradingBot交易紀錄僅供參考，並不承擔您交易上的損失，相關問題請見免責聲明。");
         var msg = new builder.Message(session)
             .attachments([
                 new builder.ReceiptCard(session)
@@ -507,7 +499,7 @@ bot.dialog('/info', [
             //return sendInternetUrl(session, url, 'image/gif', '期貨交易資訊');
             case Options:
                 return redisGetSymbol1('SYMBOL', session);
-                //return uploadFileAndSend(session, './images/big-image.png', 'image/png', 'BotFramework.png');
+            //return uploadFileAndSend(session, './images/big-image.png', 'image/png', 'BotFramework.png');
             case Woptions:
                 return redisGetSymbol1W('SYMBOLW', session);
             /*remotepng.shotpng('https://tw.screener.finance.yahoo.net/future/aa03?opmr=optionpart&opcm=WTXO&opym=' + yyyymm , 'options.png' ).then(function () {
@@ -517,7 +509,7 @@ bot.dialog('/info', [
     }]);
 
 var Futures = '期貨走勢';
-var Woptions= '周選擇權價格表';
+var Woptions = '周選擇權價格表';
 var Options = '選擇權價格表';
 var SelOpts = [Futures, Options, Woptions];
 
