@@ -382,21 +382,20 @@ bot.dialog('/subscribe', [
         var msg = new builder.Message(session)
             .attachments([
                 new builder.ReceiptCard(session)
-                    .title("Recipient's Name")
+                    .title("投資推播訂閱服務")
                     .items([
-                        builder.ReceiptItem.create(session, "$22.00", "EMP Museum").image(builder.CardImage.create(session, "https://upload.wikimedia.org/wikipedia/commons/a/a0/Night_Exterior_EMP.jpg")),
-                        builder.ReceiptItem.create(session, "$22.00", "Space Needle").image(builder.CardImage.create(session, "https://upload.wikimedia.org/wikipedia/commons/7/7c/Seattlenighttimequeenanne.jpg"))
+                        builder.ReceiptItem.create(session, "$94.05", "訂閱服務費").image(builder.CardImage.create(session, "https://cloud.githubusercontent.com/assets/664465/25315599/367e0460-288a-11e7-9fb4-ef0380bd8a88.jpg")),
                     ])
                     .facts([
-                        builder.Fact.create(session, "1234567898", "Order Number"),
-                        builder.Fact.create(session, "VISA 4076", "Payment Method")
+                        builder.Fact.create(session, "1234567890", "訂單編號"),
+                        builder.Fact.create(session, "VISA 1234 4567 7890", "付費方式")
                     ])
-                    .tax("$4.40")
-                    .total("$48.40")
+                    .tax("NT$4.95")
+                    .total("NT$99")
             ]);
-        session.send(msg);
+        //session.send(msg);
 
-        session.send("Or using facebooks native attachment schema...");
+        /*session.send("Or using facebooks native attachment schema...");
         msg = new builder.Message(session)
             .sourceEvent({
                 facebook: {
@@ -449,7 +448,7 @@ bot.dialog('/subscribe', [
                         }
                     }
                 }
-            });
+            });*/
         session.endDialog(msg);
     }
 ]);
