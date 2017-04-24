@@ -68,6 +68,18 @@ function redisGetSymbol1(key, session) {
     });
 }
 
+function redisGetOptions(key, session) {
+    client.get(key, function (err, reply) {
+        if (err) throw err;
+        console.log(reply.toString());
+        var suggest = reply.toString();
+        var result = suggest.split(";");
+        remotepng.shotpng1('http://tradingbot.azurewebsites.net/options' + result[0] + '.html', 'options_suggest.png').then(function () {
+            sendInline(session, './images/options_suggest.png', 'image/png', '選擇權投資建議');
+        });
+    });
+}
+
 function redisGetSymbol1W(key, session) {
     client.get(key, function (err, reply) {
         if (err) throw err;
@@ -289,8 +301,8 @@ bot.dialog('/cards', [
 bot.dialog('/options', [
     function (session) {
         session.send("依據期貨波動和演算法分析，選擇權投資建議如下：");
-
-        var msg = new builder.Message(session)
+        redisGetOptions('OPTIONS', session)
+        /*var msg = new builder.Message(session)
             .attachments([
                 new builder.HeroCard(session)
                     .title("Space Needle")
@@ -305,7 +317,7 @@ bot.dialog('/options', [
                         builder.CardImage.create(session, "https://upload.wikimedia.org/wikipedia/en/thumb/2/2a/PikePlaceMarket.jpg/320px-PikePlaceMarket.jpg")
                     ])
             ]);
-        session.endDialog(msg);
+        session.endDialog(msg);*/
     }
 ]);
 

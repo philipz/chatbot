@@ -15,6 +15,14 @@ var options = {
   defaultWhiteBackground: true
 };
 
+var options1 = {
+  shotSize: {
+    width: 375
+    , height: 305
+  },
+  defaultWhiteBackground: true
+};
+
 /**
  * Gets the remote Taifex futures webpage shot
  * @param {string} text The text to be corrected
@@ -25,6 +33,20 @@ exports.shotpng = function (url, filename) {
     function (resolve, reject) {
       if (url) {
         webshot(url, './images/' + filename, options, function (err) {
+          if (err) return reject(error);
+          resolve('success');
+        });
+      } else {
+        resolve(url);
+      }
+    })
+};
+
+exports.shotpng1 = function (url, filename) {
+  return new Promise(
+    function (resolve, reject) {
+      if (url) {
+        webshot(url, './images/' + filename, options1, function (err) {
           if (err) return reject(error);
           resolve('success');
         });
