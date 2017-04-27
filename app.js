@@ -74,7 +74,7 @@ function redisGetOptions(key, session) {
         console.log(reply.toString());
         var suggest = reply.toString();
         var result = suggest.split(";");
-        if (result === '0') {
+        if (result[0] === '0') {
             session.endDialog('目前暫無選擇權投資建議！');
         } else {
             remotepng.shotpng1('http://tradingbot.azurewebsites.net/options' + result[0] + '.html', 'options_suggest.png').then(function () {
