@@ -131,6 +131,7 @@ bot.use(builder.Middleware.dialogVersion({ version: 1.0, resetCommand: /^reset/i
 
 bot.endConversationAction('goodbye', '再見囉～歡迎來信指教 tradingbot.tw@gmail.com 期待再次使用！', { matches: [/^goodbye/i, /\u96e2\u958b/, /\u518D\u898B/] });
 bot.beginDialogAction('help', '/help', { matches: [/^help/i, /\u5e6b\u5fd9/, /\u6c42\u52a9/, /\u5e6b\u52a9/] });
+bot.beginDialogAction('menu', '/menu', { matches: [/^menu/i, /\u9078\u55ae/, /\u6e05\u55ae/] });
 
 //=========================================================
 // Bots Dialogs
@@ -163,7 +164,7 @@ bot.dialog('/', [
 bot.dialog('/menu', [
     function (session) {
         //carousel 國際新聞 receipt 訂閱服務 alert 到價提示
-        builder.Prompts.choice(session, "請選擇下列功能：", "交易現況|選擇權策略|金融新聞|商品資訊|未平倉量|到價警示|訂閱服務|托播廣告|離開");
+        builder.Prompts.choice(session, "請選擇下列功能：", "交易現況|選擇權策略|金融新聞|商品資訊|未平倉量|到價警示|問答測驗|訂閱服務|托播廣告|離開");
     },
     function (session, results) {
         if (results.response && results.response.entity != '離開') {
@@ -180,6 +181,8 @@ bot.dialog('/menu', [
                 session.beginDialog('/oi');
             } else if (results.response.entity === '到價警示') {
                 session.beginDialog('/alert');
+            } else if (results.response.entity === '問答測驗') {
+                session.beginDialog('/knowledge');
             } else if (results.response.entity === '訂閱服務') {
                 session.beginDialog('/subscribe');
             } else if (results.response.entity === '托播廣告') {
@@ -522,6 +525,89 @@ bot.dialog('/info', [
             });*/
         }
     }]);
+
+var DialogLabels = {
+    YES: '是',
+    NO: '否'
+};
+
+var score;
+bot.dialog('/knowledge', [
+    function (session) {
+        session.send("金融常識問答測驗可驗證是否具備金融投資上的正確觀念，避免因觀念上的錯誤導致錯誤的投資，白白浪費冤枉錢。若要中斷測驗，可輸入menu或選單。");
+        score = 0;
+        // prompt for search option
+        builder.Prompts.choice(
+            session,
+            '期貨和選擇權，可以跟股票一樣長久持有，並且有股利股息？',
+            [DialogLabels.YES, DialogLabels.NO],
+            {
+                maxRetries: 1,
+                retryPrompt: 'Not a valid option'
+            });
+    },
+    function (session, result) {
+        if (!result.response) {
+            // exhausted attemps and no selection, start over
+            session.send('很可惜！輸入錯誤太多次了。 :( 但別難過，您仍然可以重新嘗試，歡迎再度測驗！');
+            return session.endDialog();
+        }
+
+        // on error, start over
+        session.on('error', function (err) {
+            session.send('輸入錯誤選項： %s ，中斷此測驗。', err.message);
+            session.endDialog();
+        });
+
+        // continue on proper dialog
+        var selection = result.response.entity;
+        switch (selection) {
+            case DialogLabels.YES:
+                session.send('答錯了！ :( 請去研讀相關金融商品說明。');
+                return session.endDialog('您的成績為： %s 再接再厲！', score);
+            case DialogLabels.NO:
+                score = score + 20;
+                session.send('答對了！期貨選擇權在契約到期後，就會自動中止並履約，因此不會有股利股息。');
+                return session.endDialog('您的成績為： %s 再接再厲！', score);
+        }
+    }
+    /*
+        function (session) {
+            session.send("金融常識問答測驗可驗證是否具備金融投資上的正確觀念，避免因觀念上的錯誤導致錯誤的投資，白白浪費冤枉錢。");
+            score = 0;
+            // prompt for search option
+            builder.Prompts.choice(
+                session,
+                '期貨和選擇權，跟股票一樣可以一直持有，Are you looking for a flight or a hotel?',
+                [DialogLabels.Flights, DialogLabels.Hotels],
+                {
+                    maxRetries: 3,
+                    retryPrompt: 'Not a valid option'
+                });
+        },
+        function (session, result) {
+            if (!result.response) {
+                // exhausted attemps and no selection, start over
+                session.send('Ooops! Too many attemps :( But don\'t worry, I\'m handling that exception and you can try again!');
+                return session.endDialog();
+            }
+    
+            // on error, start over
+            session.on('error', function (err) {
+                session.send('Failed with message: %s', err.message);
+                session.endDialog();
+            });
+    
+            // continue on proper dialog
+            var selection = result.response.entity;
+            switch (selection) {
+                case DialogLabels.Flights:
+                    return session.beginDialog('flights');
+                case DialogLabels.Hotels:
+                    return session.beginDialog('hotels');
+            }
+        }*/
+]);
 
 var Futures = '期貨走勢';
 var Woptions = '周選擇權價格表';
