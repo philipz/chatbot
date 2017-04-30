@@ -543,7 +543,7 @@ bot.dialog('/knowledge', [
             [DialogLabels.YES, DialogLabels.NO],
             {
                 maxRetries: 1,
-                retryPrompt: 'Not a valid option'
+                retryPrompt: '非所提供的選項'
             });
     },
     function (session, result) {
@@ -564,49 +564,221 @@ bot.dialog('/knowledge', [
         switch (selection) {
             case DialogLabels.YES:
                 session.send('答錯了！ :( 請去研讀相關金融商品說明。');
-                return session.endDialog('您的成績為： %s 再接再厲！', score);
+                return session.beginDialog('/knowledge1');
             case DialogLabels.NO:
                 score = score + 20;
                 session.send('答對了！期貨選擇權在契約到期後，就會自動中止並履約，因此不會有股利股息。');
-                return session.endDialog('您的成績為： %s 再接再厲！', score);
+                return session.beginDialog('/knowledge1');
+        };
+    }
+]);
+
+var DialogLabels1 = {
+    A50: '50',
+    A100: '100',
+    A150: '150',
+    A200: '200'
+};
+
+bot.dialog('/knowledge1', [
+    function (session) {
+        builder.Prompts.choice(
+            session,
+            '請問臺股指數期貨（大台）的契約指數1點是新台幣多少元？',
+            [DialogLabels1.A50, DialogLabels1.A100, DialogLabels1.A150, DialogLabels1.A200],
+            {
+                maxRetries: 1,
+                retryPrompt: '非所提供的選項'
+            });
+    },
+    function (session, result) {
+        if (!result.response) {
+            // exhausted attemps and no selection, start over
+            session.send('很可惜！輸入錯誤太多次了。 :( 但別難過，您仍然可以重新嘗試，歡迎再度測驗！');
+            return session.endDialog();
+        }
+
+        // on error, start over
+        session.on('error', function (err) {
+            session.send('輸入錯誤選項： %s ，中斷此測驗。', err.message);
+            session.endDialog();
+        });
+
+        // continue on proper dialog
+        var selection = result.response.entity;
+        switch (selection) {
+            case DialogLabels1.A50:
+                session.send('答錯了！ :( 請去研讀相關金融商品說明。');
+                return session.beginDialog('/knowledge2');
+            case DialogLabels1.A100:
+                session.send('答錯了！ :( 請去研讀相關金融商品說明。');
+                return session.beginDialog('/knowledge2');
+            case DialogLabels1.A150:
+                session.send('答錯了！ :( 請去研讀相關金融商品說明。');
+                return session.beginDialog('/knowledge2');
+            case DialogLabels1.A200:
+                score = score + 20;
+                session.send('答對了！臺指期每跳動1點，就表示變動200元，跳動20點，就是2000元。');
+                return session.beginDialog('/knowledge2');
         }
     }
-    /*
-        function (session) {
-            session.send("金融常識問答測驗可驗證是否具備金融投資上的正確觀念，避免因觀念上的錯誤導致錯誤的投資，白白浪費冤枉錢。");
-            score = 0;
-            // prompt for search option
-            builder.Prompts.choice(
-                session,
-                '期貨和選擇權，跟股票一樣可以一直持有，Are you looking for a flight or a hotel?',
-                [DialogLabels.Flights, DialogLabels.Hotels],
-                {
-                    maxRetries: 3,
-                    retryPrompt: 'Not a valid option'
-                });
-        },
-        function (session, result) {
-            if (!result.response) {
-                // exhausted attemps and no selection, start over
-                session.send('Ooops! Too many attemps :( But don\'t worry, I\'m handling that exception and you can try again!');
-                return session.endDialog();
-            }
-    
-            // on error, start over
-            session.on('error', function (err) {
-                session.send('Failed with message: %s', err.message);
-                session.endDialog();
+]);
+
+var DialogLabels2 = {
+    A1: '每個月的1號',
+    A2: '每個月的第三個星期三',
+    A3: '每個月的倒數第二個日',
+    A4: '每個月的最後一天'
+};
+
+bot.dialog('/knowledge2', [
+    function (session) {
+        builder.Prompts.choice(
+            session,
+            '請問臺股指數期貨選擇權相關商品，例如臺指期貨、小型臺指期貨和臺指選擇權的契約是何時到期並履約結算？',
+            [DialogLabels2.A1, DialogLabels2.A2, DialogLabels2.A3, DialogLabels2.A4],
+            {
+                maxRetries: 1,
+                retryPrompt: '非所提供的選項'
             });
-    
-            // continue on proper dialog
-            var selection = result.response.entity;
-            switch (selection) {
-                case DialogLabels.Flights:
-                    return session.beginDialog('flights');
-                case DialogLabels.Hotels:
-                    return session.beginDialog('hotels');
-            }
-        }*/
+    },
+    function (session, result) {
+        if (!result.response) {
+            // exhausted attemps and no selection, start over
+            session.send('很可惜！輸入錯誤太多次了。 :( 但別難過，您仍然可以重新嘗試，歡迎再度測驗！');
+            return session.endDialog();
+        }
+
+        // on error, start over
+        session.on('error', function (err) {
+            session.send('輸入錯誤選項： %s ，中斷此測驗。', err.message);
+            session.endDialog();
+        });
+
+        // continue on proper dialog
+        var selection = result.response.entity;
+        switch (selection) {
+            case DialogLabels2.A1:
+                session.send('答錯了！ :( 請去研讀相關金融商品說明。');
+                return session.beginDialog('/knowledge3');
+            case DialogLabels2.A2:
+                score = score + 20;
+                session.send('答對了！是每個月的第三個星期三，遇假日順延一天。');
+                return session.beginDialog('/knowledge3');
+            case DialogLabels2.A3:
+                session.send('答錯了！ :( 請去研讀相關金融商品說明。');
+                return session.beginDialog('/knowledge3');
+            case DialogLabels2.A4:
+                session.send('答錯了！ :( 請去研讀相關金融商品說明。');
+                return session.beginDialog('/knowledge3');
+        }
+    }
+]);
+
+var DialogLabels3 = {
+    B1: '個股期貨',
+    B2: '個股權證',
+    B3: '黃金期貨',
+    B4: '個股選擇權'
+};
+
+bot.dialog('/knowledge3', [
+    function (session) {
+        builder.Prompts.choice(
+            session,
+            '期貨是現貨股票交易的避險工具，而選擇權又是期貨的避免工具，請問單一個股的避免工具為何？',
+            [DialogLabels3.B1, DialogLabels3.B2, DialogLabels3.B3, DialogLabels3.B4],
+            {
+                maxRetries: 1,
+                retryPrompt: '非所提供的選項'
+            });
+    },
+    function (session, result) {
+        if (!result.response) {
+            // exhausted attemps and no selection, start over
+            session.send('很可惜！輸入錯誤太多次了。 :( 但別難過，您仍然可以重新嘗試，歡迎再度測驗！');
+            return session.endDialog();
+        }
+
+        // on error, start over
+        session.on('error', function (err) {
+            session.send('輸入錯誤選項： %s ，中斷此測驗。', err.message);
+            session.endDialog();
+        });
+
+        // continue on proper dialog
+        var selection = result.response.entity;
+        switch (selection) {
+            case DialogLabels3.B1:
+                score = score + 20;
+                session.send('答對了！透過個股期貨買進或放空才能直接對單一股票進行避險。');
+                return session.beginDialog('/knowledge4');
+            case DialogLabels3.B2:
+                session.send('答錯了！ :( 請去研讀相關金融商品說明。');
+                return session.beginDialog('/knowledge4');
+            case DialogLabels3.B3:
+                session.send('答錯了！ :( 請去研讀相關金融商品說明。');
+                return session.beginDialog('/knowledge4');
+            case DialogLabels3.B4:
+                session.send('答錯了！ :( 請去研讀相關金融商品說明。');
+                return session.beginDialog('/knowledge4');
+        }
+    }
+]);
+
+var DialogLabels4 = {
+    C1: '股票價格',
+    C2: '權證價格',
+    C3: '股票交易量',
+    C4: '權證交易量'
+};
+
+bot.dialog('/knowledge4', [
+    function (session) {
+        builder.Prompts.choice(
+            session,
+            '上一題提到個股權證，而權證又分為認購跟認售，分別為買漲與買跌，請問券商發行權證是將持有股票包裝成權證商品再買給投資大眾，請問券商是控制那一項來讓公司獲利？',
+            [DialogLabels4.C1, DialogLabels4.C2, DialogLabels4.C3, DialogLabels4.C4],
+            {
+                maxRetries: 1,
+                retryPrompt: '非所提供的選項'
+            });
+    },
+    function (session, result) {
+        if (!result.response) {
+            // exhausted attemps and no selection, start over
+            session.send('很可惜！輸入錯誤太多次了。 :( 但別難過，您仍然可以重新嘗試，歡迎再度測驗！');
+            return session.endDialog();
+        }
+
+        // on error, start over
+        session.on('error', function (err) {
+            session.send('輸入錯誤選項： %s ，中斷此測驗。', err.message);
+            session.endDialog();
+        });
+
+        // continue on proper dialog
+        var selection = result.response.entity;
+        switch (selection) {
+            case DialogLabels4.C1:
+                session.send('答錯了！ :( 請去研讀相關金融商品說明。');
+                return session.endDialog('您的成績為： %s 再接再厲！', score);
+            case DialogLabels4.C2:
+                session.send('答錯了！ :( 請去研讀相關金融商品說明。');
+                return session.endDialog('您的成績為： %s 再接再厲！', score);
+            case DialogLabels4.C3:
+                session.send('答錯了！ :( 請去研讀相關金融商品說明。');
+                return session.endDialog('您的成績為： %s 再接再厲！', score);
+            case DialogLabels4.C4:
+                score = score + 20;
+                var score_txt = '再接再厲！';
+                if (score === 100) {
+                    score_txt = '真是天才！';
+                }
+                session.send('答對了！透過操控個股權證的流動率，當散戶賺錢時，權證交易量降低，就可減少虧損，而當散戶賠錢時，權證交易量提高，就可增加獲利。');
+                return session.endDialog('您的成績為： %s ' + score_txt, score);
+        }
+    }
 ]);
 
 var Futures = '期貨走勢';
