@@ -737,7 +737,7 @@ bot.dialog('/knowledge4', [
     function (session) {
         builder.Prompts.choice(
             session,
-            '上一題提到個股權證，而權證又分為認購跟認售，分別為買漲與買跌，請問券商發行權證是將持有股票包裝成權證商品再買給投資大眾，請問券商是控制那一項來讓公司獲利？',
+            '上一題提到個股權證，而權證又分為認購跟認售，分別為買漲與買跌，券商發行權證是將持有股票包裝成權證商品再買給投資大眾，請問券商是控制那一項來讓公司獲利？',
             [DialogLabels4.C1, DialogLabels4.C2, DialogLabels4.C3, DialogLabels4.C4],
             {
                 maxRetries: 1,
