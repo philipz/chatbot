@@ -338,39 +338,50 @@ bot.dialog('/news', [
             .attachments([
                 new builder.HeroCard(session)
                     .title("msn 財經")
-                    .subtitle("台股站回季線 投信：個股差異將拉大")
+                    .subtitle("史上最無感的萬點 股民只開心1秒鐘")
                     .images([
-                        builder.CardImage.create(session, "https://cloud.githubusercontent.com/assets/664465/25314190/b2f2538e-2871-11e7-83eb-eb41c0db28cd.jpg")
-                            .tap(builder.CardAction.showImage(session, "https://cloud.githubusercontent.com/assets/664465/25314157/1fed14f2-2871-11e7-8099-86bc94c582f5.jpg")),
+                        builder.CardImage.create(session, "https://cloud.githubusercontent.com/assets/664465/25881551/2f0f5d30-3570-11e7-83f2-d6c8125f8bd8.jpg")
+                            .tap(builder.CardAction.showImage(session, "https://cloud.githubusercontent.com/assets/664465/25881549/2ee071aa-3570-11e7-8b76-21982b4c9028.jpg")),
                     ])
                     .buttons([
-                        builder.CardAction.openUrl(session, "https://www.msn.com/zh-tw/money/topstories/%E5%8F%B0%E8%82%A1%E7%AB%99%E5%9B%9E%E5%AD%A3%E7%B7%9A-%E6%8A%95%E4%BF%A1%E5%80%8B%E8%82%A1%E5%B7%AE%E7%95%B0%E5%B0%87%E6%8B%89%E5%A4%A7/ar-BBAakiQ", "MSN財經"),
+                        builder.CardAction.openUrl(session, "https://www.msn.com/zh-tw/money/topstories/%E5%8F%B2%E4%B8%8A%E6%9C%80%E7%84%A1%E6%84%9F%E7%9A%84%E8%90%AC%E9%BB%9E-%E8%82%A1%E6%B0%91%E5%8F%AA%E9%96%8B%E5%BF%831%E7%A7%92%E9%90%98/ar-BBAWdOL", "MSN財經"),
                         builder.CardAction.imBack(session, "select:msn", "讚+1")
                     ]),
                 new builder.HeroCard(session)
                     .title("鉅亨網")
-                    .subtitle("台股重返季線 有望現轉折 惟仍須慎防7大變數")
+                    .subtitle("當沖降稅藥方失效？財長認量能未發揮")
                     .images([
-                        builder.CardImage.create(session, "https://cloud.githubusercontent.com/assets/664465/25314208/2fef7ad8-2872-11e7-96c8-99453d336cdf.jpg")
-                            .tap(builder.CardAction.showImage(session, "https://cloud.githubusercontent.com/assets/664465/25314207/2ba72f66-2872-11e7-84ef-0683d8dbf306.jpg")),
+                        builder.CardImage.create(session, "https://cloud.githubusercontent.com/assets/664465/25882012/f316c6f8-3572-11e7-9cb3-a19b9216a759.jpg")
+                            .tap(builder.CardAction.showImage(session, "https://cloud.githubusercontent.com/assets/664465/25882011/f2c32124-3572-11e7-9b59-eaa9067f20c5.jpg"))
                     ])
                     .buttons([
-                        builder.CardAction.openUrl(session, "http://news.cnyes.com/news/id/3788485t", "鉅亨網"),
+                        builder.CardAction.openUrl(session, "http://news.cnyes.com/news/id/3806387", "鉅亨網"),
                         builder.CardAction.imBack(session, "select:cnyes", "讚+1")
                     ]),
                 new builder.HeroCard(session)
                     .title("Yahoo!奇摩新聞")
-                    .subtitle("《台北股市》當沖降稅28日上路，台股添活水")
+                    .subtitle("台股萬點沒坐穩 收盤翻黑")
                     .images([
                         builder.CardImage.create(session, "https://cloud.githubusercontent.com/assets/664465/25314342/ad9d1b14-2874-11e7-973c-b1f000599f19.png")
                             .tap(builder.CardAction.showImage(session, "https://cloud.githubusercontent.com/assets/664465/25314340/acc8cb48-2874-11e7-90cd-b947739ee75f.png"))
                     ])
                     .buttons([
-                        builder.CardAction.openUrl(session, "https://tw.stock.yahoo.com/news_content/url/d/a/20170423/%E5%8F%B0%E5%8C%97%E8%82%A1%E5%B8%82-%E7%95%B6%E6%B2%96%E9%99%8D%E7%A8%8528%E6%97%A5%E4%B8%8A%E8%B7%AF-%E5%8F%B0%E8%82%A1%E6%B7%BB%E6%B4%BB%E6%B0%B4-055921465.html", "Yahoo!奇摩新聞"),
+                        builder.CardAction.openUrl(session, "https://tw.news.yahoo.com/%E5%8F%B0%E8%82%A1%E8%90%AC%E9%BB%9E%E6%B2%92%E5%9D%90%E7%A9%A9-%E6%94%B6%E7%9B%A4%E7%BF%BB%E9%BB%91-215311218--finance.html", "Yahoo!奇摩新聞"),
                         builder.CardAction.imBack(session, "select:yahoo", "讚+1")
+                    ]),
+                new builder.HeroCard(session)
+                    .title("信傳媒")
+                    .subtitle("號子空蕩蕩 台灣投資人都得了萬點恐懼症")
+                    .images([
+                        builder.CardImage.create(session, "https://cloud.githubusercontent.com/assets/664465/25881927/5b174012-3572-11e7-9854-1e2a3acd433b.jpg")
+                            .tap(builder.CardAction.showImage(session, "https://cloud.githubusercontent.com/assets/664465/25881930/5bc3f406-3572-11e7-815a-78ba28b189ee.jpg"))
+                    ])
+                    .buttons([
+                        builder.CardAction.openUrl(session, "https://www.cmmedia.com.tw/home/articles/3789", "信傳媒"),
+                        builder.CardAction.imBack(session, "select:cmm", "讚+1")
                     ])
             ]);
-        builder.Prompts.choice(session, msg, "select:msn|select:cnyes|select:yahoo");
+        builder.Prompts.choice(session, msg, "select:msn|select:cnyes|select:yahoo|select:cmm");
     },
     function (session, results) {
         var action, item;
@@ -382,13 +393,16 @@ bot.dialog('/news', [
         }
         switch (kvPair[1]) {
             case 'msn':
-                item = "台股站回季線 投信：個股差異將拉大";
+                item = "史上最無感的萬點 股民只開心1秒鐘";
                 break;
             case 'cnyes':
-                item = "台股重返季線 有望現轉折 惟仍須慎防7大變數";
+                item = "當沖降稅藥方失效？財長認量能未發揮";
                 break;
             case 'yahoo':
-                item = "《台北股市》當沖降稅28日上路，台股添活水";
+                item = "台股萬點沒坐穩 收盤翻黑";
+                break;
+            case 'cmm':
+                item = "號子空蕩蕩 台灣投資人都得了萬點恐懼症";
                 break;
         }
         session.endDialog('您認為 "%s" %s', item, action);
