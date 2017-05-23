@@ -164,7 +164,7 @@ bot.dialog('/', [
 bot.dialog('/menu', [
     function (session) {
         //carousel 國際新聞 receipt 訂閱服務 alert 到價提示
-        builder.Prompts.choice(session, "請選擇下列功能：", "交易現況|選擇權策略|金融新聞|商品資訊|未平倉量|到價警示|問答測驗|訂閱服務|托播廣告|離開");
+        builder.Prompts.choice(session, "請選擇下列功能：", "交易現況|選擇權策略|金融新聞|商品資訊|未平倉量|到價警示|問答測驗|訂閱服務|託播廣告|離開");
     },
     function (session, results) {
         if (results.response && results.response.entity != '離開') {
@@ -185,7 +185,7 @@ bot.dialog('/menu', [
                 session.beginDialog('/knowledge');
             } else if (results.response.entity === '訂閱服務') {
                 session.beginDialog('/subscribe');
-            } else if (results.response.entity === '托播廣告') {
+            } else if (results.response.entity === '託播廣告') {
                 session.beginDialog('/ad');
             } else {
                 session.beginDialog('/news');
@@ -270,7 +270,7 @@ bot.dialog('/alert', [
 
 bot.dialog('/ad', [
     function (session) {
-        session.send("歡迎金融業者托播相關商品廣告，並歡迎異業合作，篩選後提供符合粉絲團朋友之相關商品，創造雙贏機會。");
+        session.send("歡迎金融業者託播相關商品廣告，並歡迎異業合作，篩選後提供符合粉絲團朋友之相關商品，創造雙贏機會。");
         session.endDialog("即將推出，敬請期待......");
     }
 ]);
